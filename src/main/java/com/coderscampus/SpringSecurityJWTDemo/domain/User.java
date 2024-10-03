@@ -1,14 +1,12 @@
 package com.coderscampus.SpringSecurityJWTDemo.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Table(name = "users")
@@ -25,13 +23,22 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonIgnoreProperties("user")
     private List<Authority> authorities = new ArrayList<>();
-    
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<BirthChart> birthCharts;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Report> reports = new ArrayList<>();
+
+    public User(List<BirthChart> birthCharts) {
+        this.birthCharts = birthCharts;
+    }
+
+
     /*
      * enable if you want to have the confirm password to be checked in the back end + their corresponding getters and setters
      * private String confirmPassword;
      */
-    
-    
+
+
     @Override
     public Collection<Authority> getAuthorities() {
         return authorities;
@@ -79,17 +86,17 @@ public class User implements UserDetails {
     public String getPassword() {
         return this.password;
     }
-    
+
     public User firstName(String firstName) {
         this.firstName = firstName;
         return this;
     }
-    
+
     public User lastName(String lastName) {
         this.lastName = lastName;
         return this;
     }
-    
+
     public User email(String email) {
         this.email = email;
         return this;
@@ -100,12 +107,12 @@ public class User implements UserDetails {
         this.getAuthorities().add(auth);
         return this;
     }
-    
+
     public User password(String password) {
         this.password = password;
         return this;
     }
-    
+
     public void setId(Integer id) {
         this.id = id;
     }
@@ -135,8 +142,23 @@ public class User implements UserDetails {
     }
 
 
-    public User build () {
+    public User build() {
         return this;
     }
 
+    public void setBirthCharts(List<BirthChart> birthCharts) {
+        this.birthCharts = birthCharts;
+    }
+
+    public List<BirthChart> getBirthCharts() {
+        return birthCharts;
+    }
+
+    public List<Report> getReports() {
+        return reports;
+    }
+
+    public void setReports(List<Report> reports) {
+        this.reports = reports;
+    }
 }
